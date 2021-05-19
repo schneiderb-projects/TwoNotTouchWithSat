@@ -200,9 +200,10 @@ def solve(puzzle):
     # parse solution into a list of numbers representing the squares which a star should be placed in
     lines = lines.split("\n")
     
-    if lines[0] == "UNSAT":  # if unsatifiable
+    if lines[0] == "UNSAT":  # if unsatisfiable
         return []  # return empty list
     
+    # parse solution
     lines = lines[1].split(" ")
     stars = []
     for x in lines:

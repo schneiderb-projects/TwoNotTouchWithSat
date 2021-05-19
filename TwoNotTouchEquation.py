@@ -1,6 +1,28 @@
 from os import system
 import numpy as np
 
+"""
+What's going on here? 
+
+Birds eye view:
+-Constructs a set of clauses in conjunctive normal form (CNF or product of sums) which encode the rules of the puzzle as a SAT problem
+-These clauses are then fed into the minisat SAT solver to solve for the satisfiability of the problem
+
+Here's the process: 
+-First CNF equations constructed to represent the constraints for each row and column
+-Next CNF equations are constructed to represent the constraints for each sector
+-Lastly the CNF equations are joined into 1 big CNF equation which is then sent to be solved by minisat
+
+How are the CNF equations found?
+-These are created by finding the max terms for each constraint
+-Since max terms solve for all unsatisfying solution (!F = ∑(max terms)), the equation needed to be inverted to
+ which would result in the equation for satisfying solutions in CNF by using the method shown below:
+1. !F = ∑(max terms)                    // solve the max terms of the problem to find all unsatisfying solutions
+2. !(!F = ∑(max terms))                 // invert the equation to find satisfying solutions instead
+3. !!F = !∑(max terms)                  // distribute the inversion
+4. F = ∏(!(max terms))                  //apply DeMorgan's law, now it's in CNF
+"""
+
 
 """
 just a helper function to arrange lists of the literal in alternating patterns of positive and negated
@@ -102,11 +124,11 @@ def demorgans(max_terms):
     for clause in max_terms:  # iterate over each clause
         to_add = []
         for literal in clause:  # iterate over each literal
-            to_add.append(literal * -1)  # apply demorgan's law by inverting each literal
+            to_add.append(literal * -1)  # apply DeMorgan's Law by inverting each literal
 
         to_return.append(to_add)
 
-    return to_return  # return the new product of sums created using demorgan's laws
+    return to_return  # return the new product of sums created using DeMorgan's Law
 
 """
 This just converts the equation out as a string using + for or, * for and, and ! for not
@@ -144,8 +166,7 @@ technique for finding equation:
 !F = ∑(max terms)                   // solve the max terms of the problem to find all unsatisfying solutions
 !(!F = ∑(max terms))                // invert the equation to find satisfying solutions instead
 !!F = !∑(max terms)                 // distribute the inversion
-F = ∏(demorgan'd max terms)         //apply demorgans law to convert sum of products to product of sums AKA conjunctive 
-                                    //normal form
+F = ∏(!(max terms))                  //apply DeMorgan's law, now it's in CNF
                                     
 returns a list of clause in conjunctive normal form
 """
@@ -199,10 +220,10 @@ def solve(puzzle):
 
     # parse solution into a list of numbers representing the squares which a star should be placed in
     lines = lines.split("\n")
-    
+
     if lines[0] == "UNSAT":  # if unsatisfiable
         return []  # return empty list
-    
+
     # parse solution
     lines = lines[1].split(" ")
     stars = []

@@ -1,7 +1,7 @@
 # TwoNotTouchWithSat
 Touch Two Not is a puzzle where you have an NxN grid and various zones of adjacent cells are walled off as well. The intent of the game is to fill in stars in grid such that,
 
-- No two stars can be adjacent to each other in any directions including diagonally
+- No two stars can be adjacent to each other
 - Every row contains exactly 2 stars
 - Every column contains exactly 2 stars
 - Every zone contains only 2 stars
